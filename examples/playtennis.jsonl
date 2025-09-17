@@ -1,0 +1,14 @@
+{"Outlook":"sunny","Temperature":85,"Humidity":85,"Wind":false,"Play":"no"}
+{"Outlook":"sunny","Temperature":80,"Humidity":90,"Wind":true,"Play":"no"}
+{"Outlook":"overcast","Temperature":83,"Humidity":86,"Wind":false,"Play":"yes"}
+{"Outlook":"rain","Temperature":70,"Humidity":96,"Wind":false,"Play":"yes"}
+{"Outlook":"rain","Temperature":68,"Humidity":80,"Wind":false,"Play":"yes"}
+{"Outlook":"rain","Temperature":65,"Humidity":70,"Wind":true,"Play":"no"}
+{"Outlook":"overcast","Temperature":64,"Humidity":65,"Wind":true,"Play":"yes"}
+{"Outlook":"sunny","Temperature":72,"Humidity":95,"Wind":false,"Play":"no"}
+{"Outlook":"sunny","Temperature":69,"Humidity":70,"Wind":false,"Play":"yes"}
+{"Outlook":"rain","Temperature":75,"Humidity":80,"Wind":false,"Play":"yes"}
+{"Outlook":"sunny","Temperature":75,"Humidity":70,"Wind":true,"Play":"yes"}
+{"Outlook":"overcast","Temperature":72,"Humidity":90,"Wind":true,"Play":"yes"}
+{"Outlook":"overcast","Temperature":81,"Humidity":75,"Wind":false,"Play":"yes"}
+{"Outlook":"rain","Temperature":71,"Humidity":80,"Wind":true,"Play":"no"}

@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="780" viewBox="0 0 1100 780">
+  <style>
+    .title{font:700 22px sans-serif;fill:#222}
+    .box{fill:#f9fbff;stroke:#4a83d8;stroke-width:2}
+    .pkg{fill:#f6fff9;stroke:#46a66a;stroke-width:2}
+    .file{fill:#fffaf3;stroke:#d8a34a;stroke-width:2}
+    .txt{font:600 14px sans-serif;fill:#222}
+    .sub{font:12px sans-serif;fill:#444}
+    .arrow{stroke:#555;stroke-width:2;marker-end:url(#arrow)}
+    .darrow{stroke:#999;stroke-width:2;stroke-dasharray:6 4;marker-end:url(#arrow) }
+  </style>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#555" />
+    </marker>
+  </defs>
+
+  <text x="550" y="40" text-anchor="middle" class="title">dtree Project Flow (CLI ↔ Library ↔ Files)</text>
+
+  <!-- CLI root -->
+  <g transform="translate(60,80)">
+    <rect width="300" height="70" rx="8" class="box"/>
+    <text x="150" y="28" text-anchor="middle" class="txt">cmd/dtree/main.go</text>
+    <text x="150" y="50" text-anchor="middle" class="sub">Subcommands: train | predict | visualize</text>
+  </g>
+
+  <!-- Train command column -->
+  <g transform="translate(60,200)">
+    <rect width="240" height="50" rx="8" class="box"/>
+    <text x="120" y="30" text-anchor="middle" class="txt">train</text>
+  </g>
+  <line x1="210" y1="150" x2="180" y2="200" class="arrow"/>
+
+  <g transform="translate(60,270)">
+    <rect width="240" height="70" rx="8" class="file"/>
+    <text x="120" y="28" text-anchor="middle" class="txt">Read Input</text>
+    <text x="120" y="50" text-anchor="middle" class="sub">CSV (header) or JSONL</text>
+  </g>
+  <line x1="180" y1="250" x2="180" y2="270" class="arrow"/>
+
+  <g transform="translate(60,360)">
+    <rect width="240" height="70" rx="8" class="pkg"/>
+    <text x="120" y="28" text-anchor="middle" class="txt">Parse → Items</text>
+    <text x="120" y="50" text-anchor="middle" class="sub">Auto numeric/categorical</text>
+  </g>
+  <line x1="180" y1="340" x2="180" y2="360" class="arrow"/>
+
+  <g transform="translate(60,450)">
+    <rect width="240" height="70" rx="8" class="pkg"/>
+    <text x="120" y="28" text-anchor="middle" class="txt">dtree.Train</text>
+    <text x="120" y="50" text-anchor="middle" class="sub">Entropy splits, stopping rules</text>
+  </g>
+  <line x1="180" y1="430" x2="180" y2="450" class="arrow"/>
+
+  <g transform="translate(60,540)">
+    <rect width="240" height="70" rx="8" class="file"/>
+    <text x="120" y="28" text-anchor="middle" class="txt">Save model.json</text>
+    <text x="120" y="50" text-anchor="middle" class="sub">encoding/json</text>
+  </g>
+  <line x1="180" y1="520" x2="180" y2="540" class="arrow"/>
+
+  <!-- Predict command column -->
+  <g transform="translate(430,200)">
+    <rect width="240" height="50" rx="8" class="box"/>
+    <text x="120" y="30" text-anchor="middle" class="txt">predict</text>
+  </g>
+  <line x1="210" y1="150" x2="550" y2="200" class="arrow"/>
+
+  <g transform="translate(430,270)">
+    <rect width="240" height="70" rx="8" class="file"/>
+    <text x="120" y="28" text-anchor="middle" class="txt">Read Input</text>
+    <text x="120" y="50" text-anchor="middle" class="sub">CSV/JSONL</text>
+  </g>
+  <line x1="550" y1="250" x2="550" y2="270" class="arrow"/>
+
+  <g transform="translate(430,360)">
+    <rect width="240" height="70" rx="8" class="file"/>
+    <text x="120" y="28" text-anchor="middle" class="txt">Load model.json</text>
+    <text x="120" y="50" text-anchor="middle" class="sub">dtree.LoadJSON</text>
+  </g>
+  <line x1="550" y1="340" x2="550" y2="360" class="arrow"/>
+
+  <g transform="translate(430,450)">
+    <rect width="240" height="70" rx="8" class="pkg"/>
+    <text x="120" y="28" text-anchor="middle" class="txt">Predict / PredictProba</text>
+    <text x="120" y="50" text-anchor="middle" class="sub">Route missing to larger child</text>
+  </g>
+  <line x1="550" y1="430" x2="550" y2="450" class="arrow"/>
+
+  <g transform="translate(430,540)">
+    <rect width="240" height="70" rx="8" class="file"/>
+    <text x="120" y="25" text-anchor="middle" class="txt">Write output</text>
+    <text x="120" y="45" text-anchor="middle" class="sub">JSONL (default)</text>
+    <text x="120" y="63" text-anchor="middle" class="sub">or CSV + probabilities</text>
+  </g>
+  <line x1="550" y1="520" x2="550" y2="540" class="arrow"/>
+
+  <!-- Visualize command column -->
+  <g transform="translate(800,200)">
+    <rect width="240" height="50" rx="8" class="box"/>
+    <text x="120" y="30" text-anchor="middle" class="txt">visualize</text>
+  </g>
+  <line x1="210" y1="150" x2="920" y2="200" class="arrow"/>
+
+  <g transform="translate(800,270)">
+    <rect width="240" height="70" rx="8" class="file"/>
+    <text x="120" y="28" text-anchor="middle" class="txt">Load model.json</text>
+    <text x="120" y="50" text-anchor="middle" class="sub">dtree.LoadJSON</text>
+  </g>
+  <line x1="920" y1="250" x2="920" y2="270" class="arrow"/>
+
+  <g transform="translate(800,360)">
+    <rect width="240" height="70" rx="8" class="pkg"/>
+    <text x="120" y="28" text-anchor="middle" class="txt">ToHTML / ToDOT</text>
+    <text x="120" y="50" text-anchor="middle" class="sub">HTML (tree) / Graphviz</text>
+  </g>
+  <line x1="920" y1="340" x2="920" y2="360" class="arrow"/>
+
+  <g transform="translate(760,450)">
+    <rect width="140" height="60" rx="8" class="file"/>
+    <text x="70" y="35" text-anchor="middle" class="txt">tree.html</text>
+  </g>
+  <g transform="translate(960,450)">
+    <rect width="140" height="60" rx="8" class="file"/>
+    <text x="70" y="35" text-anchor="middle" class="txt">tree.dot</text>
+  </g>
+  <line x1="920" y1="430" x2="830" y2="450" class="darrow"/>
+  <line x1="920" y1="430" x2="990" y2="450" class="darrow"/>
+
+  <!-- Library box overview -->
+  <g transform="translate(350,650)">
+    <rect width="400" height="80" rx="8" class="pkg"/>
+    <text x="200" y="28" text-anchor="middle" class="txt">dtree package</text>
+    <text x="200" y="50" text-anchor="middle" class="sub">types.go · train.go · predict.go · serialize.go · visualize.go</text>
+  </g>
+
+</svg>
+
