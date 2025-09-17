@@ -1,0 +1,16 @@
+# Binaries and build artifacts
+bin/
+*.exe
+*.out
+
+# Generated example outputs
+model.json
+preds.csv
+tree.html
+tree.dot
+
+# OS/editor noise
+.DS_Store
+.idea/
+.vscode/
+
