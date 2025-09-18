@@ -7,3 +7,4 @@ tree.dot
 .idea/
 .vscode/
 .gocache/
+.env
