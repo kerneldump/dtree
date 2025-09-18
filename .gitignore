@@ -6,4 +6,4 @@ tree.dot
 .DS_Store
 .idea/
 .vscode/
-
+.gocache/

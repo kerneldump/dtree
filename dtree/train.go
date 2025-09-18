@@ -157,6 +157,7 @@ func makeTrainingTree(set TrainingSet, cfg Config, depth int) *TreeItem {
         Attribute:      best.Attribute,
         PredicateName:  best.PredicateName,
         Pivot:          best.Pivot,
+        ClassCounts:    counterUniqueValues(set, cfg.CategoryAttr),
     }
 }
 
