@@ -2,6 +2,12 @@
 
 Decision tree (classification) library and CLI in Go.
 
+## Decision Trees in Machine Learning
+
+Decision trees are a fundamental algorithm in supervised machine learning, used for both classification and regression tasks. They work by partitioning a dataset into smaller and smaller subsets based on the values of its attributes, creating a tree-like model of decisions. Each internal node in the tree represents a "test" on an attribute (e.g., whether a coin flip is heads or tails), each branch represents the outcome of the test, and each leaf node represents a class label (a decision taken after computing all attributes). The paths from root to leaf represent classification rules.
+
+This project implements a classification decision tree, a type of decision tree that aims to predict a categorical target variable. It uses entropy, a measure of impurity or disorder, to find the best splits in the data. By recursively splitting the data, the tree learns a set of rules that can be used to classify new, unseen data.
+
 Features
 - Entropy-based splits, auto-detect numeric vs categorical features
 - Missing values handled (routes to larger child); majority fallback at leaves
