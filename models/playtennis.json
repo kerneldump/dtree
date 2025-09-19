@@ -1,0 +1,97 @@
+{
+  "root": {
+    "match": {
+      "category": "yes",
+      "classCounts": {
+        "yes": 4
+      }
+    },
+    "noMatch": {
+      "match": {
+        "category": "no",
+        "classCounts": {
+          "no": 2
+        }
+      },
+      "noMatch": {
+        "match": {
+          "category": "yes",
+          "classCounts": {
+            "yes": 2
+          }
+        },
+        "noMatch": {
+          "match": {
+            "match": {
+              "category": "no",
+              "classCounts": {
+                "no": 1
+              }
+            },
+            "noMatch": {
+              "category": "yes",
+              "classCounts": {
+                "yes": 3
+              }
+            },
+            "classCounts": {
+              "no": 1,
+              "yes": 3
+            },
+            "matchedCount": 1,
+            "noMatchedCount": 3,
+            "attribute": "Temperature",
+            "predicateName": "\u003e=",
+            "pivot": 72
+          },
+          "noMatch": {
+            "category": "no",
+            "classCounts": {
+              "no": 2
+            }
+          },
+          "classCounts": {
+            "no": 3,
+            "yes": 3
+          },
+          "matchedCount": 4,
+          "noMatchedCount": 2,
+          "attribute": "Wind",
+          "predicateName": "==",
+          "pivot": false
+        },
+        "classCounts": {
+          "no": 3,
+          "yes": 5
+        },
+        "matchedCount": 2,
+        "noMatchedCount": 6,
+        "attribute": "Temperature",
+        "predicateName": "\u003e=",
+        "pivot": 75
+      },
+      "classCounts": {
+        "no": 5,
+        "yes": 5
+      },
+      "matchedCount": 2,
+      "noMatchedCount": 8,
+      "attribute": "Temperature",
+      "predicateName": "\u003e=",
+      "pivot": 80
+    },
+    "classCounts": {
+      "no": 5,
+      "yes": 9
+    },
+    "matchedCount": 4,
+    "noMatchedCount": 10,
+    "attribute": "Outlook",
+    "predicateName": "==",
+    "pivot": "overcast"
+  },
+  "config": {
+    "categoryAttr": "Play",
+    "criterion": "entropy"
+  }
+}

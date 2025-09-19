@@ -1,0 +1,605 @@
+<html>
+<head>
+<title>Decision Tree Visualization</title>
+<style type="text/css">
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; padding: 20px; }
+  
+  .tree-container { 
+    display: flex; 
+    justify-content: center; 
+    align-items: flex-start;
+    min-height: 100vh;
+  }
+  
+  .tree { 
+    background: white; 
+    border-radius: 12px; 
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    padding: 30px;
+    overflow: auto;
+    max-width: 95vw;
+  }
+  
+  .tree ul { 
+    padding-top: 20px; 
+    position: relative; 
+    transition: all 0.3s ease;
+  }
+  
+  .tree li { 
+    white-space: nowrap; 
+    float: left; 
+    text-align: center; 
+    list-style-type: none; 
+    position: relative; 
+    padding: 20px 5px 0 5px; 
+  }
+  
+   
+  .tree li::before, .tree li::after { 
+    content: ''; 
+    position: absolute; 
+    top: 0; 
+    right: 50%; 
+    border-top: 2px solid #cbd5e0; 
+    width: 50%; 
+    height: 20px; 
+    transition: border-color 0.3s ease;
+  }
+  
+  .tree li::after { 
+    right: auto; 
+    left: 50%; 
+    border-left: 2px solid #cbd5e0; 
+    transition: border-color 0.3s ease;
+  }
+  
+  .tree li:only-child::after, .tree li:only-child::before { display: none; }
+  .tree li:only-child { padding-top: 0; }
+  .tree li:first-child::before, .tree li:last-child::after { border: 0 none; }
+  .tree li:last-child::before { border-right: 2px solid #cbd5e0; border-radius: 0 8px 0 0; transition: border-color 0.3s ease; }
+  .tree li:first-child::after { border-radius: 8px 0 0 0; }
+  
+  .tree ul ul::before { 
+    content: ''; 
+    position: absolute; 
+    top: 0; 
+    left: 50%; 
+    border-left: 2px solid #cbd5e0; 
+    width: 0; 
+    height: 20px; 
+    transition: border-color 0.3s ease;
+  }
+  
+   
+  .tree li .node { 
+    border: 2px solid #e2e8f0; 
+    padding: 12px 20px; 
+    text-decoration: none; 
+    color: #2d3748; 
+    font-size: 13px; 
+    display: inline-block; 
+    border-radius: 8px; 
+    background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    min-width: 120px;
+  }
+  
+  .tree li .node:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    border-color: #4299e1;
+    background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%);
+  }
+  
+   
+  .tree li .leaf {
+    background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+    border-color: #38a169;
+    font-weight: 600;
+    color: #1a202c;
+  }
+  
+  .tree li .leaf:hover {
+    background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+    border-color: #2f855a;
+  }
+  
+   
+  .branch-label {
+    position: absolute;
+    top: -8px;
+    background: #4a5568;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 10;
+    transition: all 0.3s ease;
+  }
+  
+  .branch-yes { background: #38a169; }
+  .branch-no { background: #e53e3e; }
+  
+   
+  .tree li.path-active::before,
+  .tree li.path-active::after {
+    border-color: #4299e1 !important;
+    border-width: 3px !important;
+  }
+  
+  .tree ul.path-active::before {
+    border-color: #4299e1 !important;
+    border-width: 3px !important;
+  }
+  
+  .tree li .node.path-active {
+    border-color: #4299e1 !important;
+    background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%) !important;
+    box-shadow: 0 0 20px rgba(66, 153, 225, 0.4) !important;
+  }
+  
+  .tree li .leaf.path-active {
+    border-color: #38a169 !important;
+    background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%) !important;
+    box-shadow: 0 0 20px rgba(56, 161, 105, 0.4) !important;
+  }
+  
+   
+  .tree.highlighting li:not(.path-active) .node:not(.path-active) {
+    opacity: 0.3;
+    filter: grayscale(0.5);
+  }
+  
+  .tree.highlighting li:not(.path-active)::before,
+  .tree.highlighting li:not(.path-active)::after {
+    opacity: 0.3;
+  }
+  
+  .tree.highlighting ul:not(.path-active)::before {
+    opacity: 0.3;
+  }
+  
+   
+  .info-panel {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    min-width: 250px;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+  }
+  
+  .info-panel.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  .info-panel h3 {
+    margin: 0 0 10px 0;
+    color: #2d3748;
+    font-size: 14px;
+  }
+  
+  .info-panel .path-info {
+    font-size: 12px;
+    color: #4a5568;
+    line-height: 1.4;
+  }
+  
+  .title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2d3748;
+    font-size: 24px;
+    font-weight: 300;
+  }
+</style>
+</head>
+<body>
+<div class="tree-container">
+  <div class="tree" id="tree">
+    <h1 class="title">Decision Tree</h1>
+    <ul>
+      <li>
+        <a href="#" class="node"><b>SpendingScore >= 65</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul>
+      <li>
+        <a href="#" class="node"><b>SpendingScore >= 85</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul>
+      <li>
+        <a href="#" class="node"><b>MembershipYears >= 2</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul>
+      <li>
+        <a href="#" class="node"><b>PurchaseFrequency >= 15</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul>
+      <li>
+        <a href="#" class="node"><b>Age >= 34</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul><li><a href="#" class="node leaf"><b>tech_enthusiast</b></a></li></ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul><li><a href="#" class="node leaf"><b>early_adopter</b></a></li></ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul><li><a href="#" class="node leaf"><b>experience_seeker</b></a></li></ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul>
+      <li>
+        <a href="#" class="node"><b>SpendingScore >= 90</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul><li><a href="#" class="node leaf"><b>impulse_buyer</b></a></li></ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul><li><a href="#" class="node leaf"><b>fashion_forward</b></a></li></ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul>
+      <li>
+        <a href="#" class="node"><b>PreferredCategory == fashion</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul>
+      <li>
+        <a href="#" class="node"><b>PurchaseFrequency >= 12</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul><li><a href="#" class="node leaf"><b>trendy_shopper</b></a></li></ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul>
+      <li>
+        <a href="#" class="node"><b>MembershipYears >= 4</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul><li><a href="#" class="node leaf"><b>style_conscious</b></a></li></ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul><li><a href="#" class="node leaf"><b>young_spender</b></a></li></ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul>
+      <li>
+        <a href="#" class="node"><b>PurchaseFrequency >= 10</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul><li><a href="#" class="node leaf"><b>active_lifestyle</b></a></li></ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul><li><a href="#" class="node leaf"><b>fitness_oriented</b></a></li></ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul>
+      <li>
+        <a href="#" class="node"><b>PurchaseFrequency >= 5</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul>
+      <li>
+        <a href="#" class="node"><b>PreferredCategory == home</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul>
+      <li>
+        <a href="#" class="node"><b>Income >= 85000</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul>
+      <li>
+        <a href="#" class="node"><b>SpendingScore >= 48</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul><li><a href="#" class="node leaf"><b>home_improver</b></a></li></ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul><li><a href="#" class="node leaf"><b>family_focused</b></a></li></ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul><li><a href="#" class="node leaf"><b>practical_buyer</b></a></li></ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul>
+      <li>
+        <a href="#" class="node"><b>PurchaseFrequency >= 8</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul><li><a href="#" class="node leaf"><b>premium_customer</b></a></li></ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul><li><a href="#" class="node leaf"><b>selective_luxury</b></a></li></ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul>
+      <li>
+        <a href="#" class="node"><b>WebsiteSessions >= 10</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul>
+      <li>
+        <a href="#" class="node"><b>Age >= 45</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul>
+      <li>
+        <a href="#" class="node"><b>PreferredCategory == home</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul><li><a href="#" class="node leaf"><b>mature_saver</b></a></li></ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul><li><a href="#" class="node leaf"><b>traditional_buyer</b></a></li></ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul><li><a href="#" class="node leaf"><b>knowledge_seeker</b></a></li></ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul>
+      <li>
+        <a href="#" class="node"><b>PurchaseFrequency >= 3</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul><li><a href="#" class="node leaf"><b>conservative</b></a></li></ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul><li><a href="#" class="node leaf"><b>minimal_buyer</b></a></li></ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="info-panel" id="info-panel">
+  <h3>Node Information</h3>
+  <div class="path-info" id="path-info">
+    Hover over a node to see the decision path
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const tree = document.getElementById('tree');
+  const infoPanel = document.getElementById('info-panel');
+  const pathInfo = document.getElementById('path-info');
+  
+  
+  let nodeId = 0;
+  const nodes = tree.querySelectorAll('.node');
+  const nodeData = new Map();
+  
+  nodes.forEach(node => {
+    const id = 'node-' + (nodeId++);
+    node.setAttribute('data-node-id', id);
+    
+    
+    const isLeaf = node.classList.contains('leaf');
+    const text = node.textContent.trim();
+    nodeData.set(id, {
+      text: text,
+      isLeaf: isLeaf,
+      element: node
+    });
+    
+    
+    node.addEventListener('mouseenter', () => highlightPath(id));
+    node.addEventListener('mouseleave', clearHighlight);
+  });
+  
+  function highlightPath(nodeId) {
+    clearHighlight();
+    tree.classList.add('highlighting');
+    infoPanel.classList.add('visible');
+    
+    const targetNode = document.querySelector('[data-node-id="' + nodeId + '"]');
+    const path = getPathToRoot(targetNode);
+    
+    
+    path.forEach(element => {
+      if (element.classList.contains('node')) {
+        element.classList.add('path-active');
+      } else if (element.tagName === 'LI') {
+        element.classList.add('path-active');
+      } else if (element.tagName === 'UL') {
+        element.classList.add('path-active');
+      }
+    });
+    
+    
+    updateInfoPanel(nodeId, path);
+  }
+  
+  function clearHighlight() {
+    tree.classList.remove('highlighting');
+    infoPanel.classList.remove('visible');
+    
+    
+    tree.querySelectorAll('.path-active').forEach(el => {
+      el.classList.remove('path-active');
+    });
+  }
+  
+  function getPathToRoot(node) {
+    const path = [];
+    let current = node;
+    
+    while (current && current !== tree) {
+      path.unshift(current);
+      current = current.parentNode;
+      
+      
+      if (current && (current.tagName === 'LI' || current.tagName === 'UL')) {
+        path.unshift(current);
+      }
+    }
+    
+    return path;
+  }
+  
+  function updateInfoPanel(nodeId, path) {
+    const nodeInfo = nodeData.get(nodeId);
+    let pathText = '';
+    
+    if (nodeInfo.isLeaf) {
+      pathText = '<strong>Prediction:</strong> ' + nodeInfo.text + '<br><br>';
+      pathText += '<strong>Decision Path:</strong><br>';
+      
+      
+      const decisions = [];
+      const nodeElements = path.filter(el => el.classList && el.classList.contains('node'));
+      
+      for (let i = 0; i < nodeElements.length - 1; i++) {
+        const nodeText = nodeElements[i].textContent.trim();
+        decisions.push('• ' + nodeText);
+      }
+      
+      if (decisions.length > 0) {
+        pathText += decisions.join('<br>');
+      } else {
+        pathText += 'Root → ' + nodeInfo.text;
+      }
+    } else {
+      pathText = '<strong>Decision Node:</strong><br>' + nodeInfo.text;
+      pathText += '<br><br><strong>Splits data based on this condition</strong>';
+    }
+    
+    pathInfo.innerHTML = pathText;
+  }
+});
+</script>
+</body>
+</html>

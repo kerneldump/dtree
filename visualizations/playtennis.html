@@ -1,12 +1,4 @@
-package dtree
-
-import (
-	"fmt"
-	"html/template"
-	"os"
-)
-
-const enhancedHTMLTemplate = `<html>
+<html>
 <head>
 <title>Decision Tree Visualization</title>
 <style type="text/css">
@@ -44,7 +36,7 @@ const enhancedHTMLTemplate = `<html>
     padding: 20px 5px 0 5px; 
   }
   
-  /* Tree connecting lines */
+   
   .tree li::before, .tree li::after { 
     content: ''; 
     position: absolute; 
@@ -80,7 +72,7 @@ const enhancedHTMLTemplate = `<html>
     transition: border-color 0.3s ease;
   }
   
-  /* Node styling */
+   
   .tree li .node { 
     border: 2px solid #e2e8f0; 
     padding: 12px 20px; 
@@ -104,7 +96,7 @@ const enhancedHTMLTemplate = `<html>
     background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%);
   }
   
-  /* Leaf nodes */
+   
   .tree li .leaf {
     background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
     border-color: #38a169;
@@ -117,7 +109,7 @@ const enhancedHTMLTemplate = `<html>
     border-color: #2f855a;
   }
   
-  /* Branch labels */
+   
   .branch-label {
     position: absolute;
     top: -8px;
@@ -137,7 +129,7 @@ const enhancedHTMLTemplate = `<html>
   .branch-yes { background: #38a169; }
   .branch-no { background: #e53e3e; }
   
-  /* Highlight states */
+   
   .tree li.path-active::before,
   .tree li.path-active::after {
     border-color: #4299e1 !important;
@@ -161,7 +153,7 @@ const enhancedHTMLTemplate = `<html>
     box-shadow: 0 0 20px rgba(56, 161, 105, 0.4) !important;
   }
   
-  /* Fade non-active elements */
+   
   .tree.highlighting li:not(.path-active) .node:not(.path-active) {
     opacity: 0.3;
     filter: grayscale(0.5);
@@ -176,7 +168,7 @@ const enhancedHTMLTemplate = `<html>
     opacity: 0.3;
   }
   
-  /* Info panel */
+   
   .info-panel {
     position: fixed;
     top: 20px;
@@ -222,7 +214,77 @@ const enhancedHTMLTemplate = `<html>
 <div class="tree-container">
   <div class="tree" id="tree">
     <h1 class="title">Decision Tree</h1>
-    {{ .tree }}
+    <ul>
+      <li>
+        <a href="#" class="node"><b>Outlook == overcast</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul><li><a href="#" class="node leaf"><b>yes</b></a></li></ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul>
+      <li>
+        <a href="#" class="node"><b>Temperature >= 80</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul><li><a href="#" class="node leaf"><b>no</b></a></li></ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul>
+      <li>
+        <a href="#" class="node"><b>Temperature >= 75</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul><li><a href="#" class="node leaf"><b>yes</b></a></li></ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul>
+      <li>
+        <a href="#" class="node"><b>Wind == false</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul>
+      <li>
+        <a href="#" class="node"><b>Temperature >= 72</b></a>
+        <ul>
+          <li>
+            <div class="branch-label branch-yes">yes</div>
+            <a href="#" class="node">✓</a><ul><li><a href="#" class="node leaf"><b>no</b></a></li></ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul><li><a href="#" class="node leaf"><b>yes</b></a></li></ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+          <li>
+            <div class="branch-label branch-no">no</div>
+            <a href="#" class="node">✗</a><ul><li><a href="#" class="node leaf"><b>no</b></a></li></ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
   </div>
 </div>
 
@@ -239,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const infoPanel = document.getElementById('info-panel');
   const pathInfo = document.getElementById('path-info');
   
-  // Add unique IDs to each node for path tracking
+  
   let nodeId = 0;
   const nodes = tree.querySelectorAll('.node');
   const nodeData = new Map();
@@ -248,7 +310,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const id = 'node-' + (nodeId++);
     node.setAttribute('data-node-id', id);
     
-    // Store node information
+    
     const isLeaf = node.classList.contains('leaf');
     const text = node.textContent.trim();
     nodeData.set(id, {
@@ -257,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function() {
       element: node
     });
     
-    // Add hover listeners
+    
     node.addEventListener('mouseenter', () => highlightPath(id));
     node.addEventListener('mouseleave', clearHighlight);
   });
@@ -270,7 +332,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const targetNode = document.querySelector('[data-node-id="' + nodeId + '"]');
     const path = getPathToRoot(targetNode);
     
-    // Highlight path elements
+    
     path.forEach(element => {
       if (element.classList.contains('node')) {
         element.classList.add('path-active');
@@ -281,7 +343,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
     
-    // Update info panel
+    
     updateInfoPanel(nodeId, path);
   }
   
@@ -289,7 +351,7 @@ document.addEventListener('DOMContentLoaded', function() {
     tree.classList.remove('highlighting');
     infoPanel.classList.remove('visible');
     
-    // Remove all highlight classes
+    
     tree.querySelectorAll('.path-active').forEach(el => {
       el.classList.remove('path-active');
     });
@@ -303,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
       path.unshift(current);
       current = current.parentNode;
       
-      // Add parent LI and UL elements to highlight connecting lines
+      
       if (current && (current.tagName === 'LI' || current.tagName === 'UL')) {
         path.unshift(current);
       }
@@ -320,7 +382,7 @@ document.addEventListener('DOMContentLoaded', function() {
       pathText = '<strong>Prediction:</strong> ' + nodeInfo.text + '<br><br>';
       pathText += '<strong>Decision Path:</strong><br>';
       
-      // Build decision path from root to leaf
+      
       const decisions = [];
       const nodeElements = path.filter(el => el.classList && el.classList.contains('node'));
       
@@ -344,88 +406,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 </body>
-</html>`
-
-// ToHTML writes an enhanced interactive HTML rendering of the tree with path highlighting.
-func (m *Model) ToHTML(path string) error {
-	tmpl, err := template.New("tree").Parse(enhancedHTMLTemplate)
-	if err != nil {
-		return err
-	}
-	f, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	data := map[string]template.HTML{"tree": template.HTML(enhancedTreeToHTML(m.Root))}
-	return tmpl.Execute(f, data)
-}
-
-func enhancedTreeToHTML(node *TreeItem) string {
-	if node == nil {
-		return ""
-	}
-
-	if node.Category != "" && node.Match == nil && node.NoMatch == nil {
-		// Leaf node
-		return `<ul><li><a href="#" class="node leaf"><b>` + node.Category + `</b></a></li></ul>`
-	}
-
-	// Internal node with enhanced structure
-	condition := fmt.Sprintf("%s %s %v", node.Attribute, node.PredicateName, node.Pivot)
-
-	return `<ul>
-      <li>
-        <a href="#" class="node"><b>` + condition + `</b></a>
-        <ul>
-          <li>
-            <div class="branch-label branch-yes">yes</div>
-            <a href="#" class="node">✓</a>` + enhancedTreeToHTML(node.Match) + `
-          </li>
-          <li>
-            <div class="branch-label branch-no">no</div>
-            <a href="#" class="node">✗</a>` + enhancedTreeToHTML(node.NoMatch) + `
-          </li>
-        </ul>
-      </li>
-    </ul>`
-}
-
-// ToDOT writes a Graphviz DOT representation.
-func (m *Model) ToDOT() string {
-	b := &dotBuilder{next: 0}
-	b.line("digraph dtree {")
-	b.line("  node [shape=box];")
-	b.walk(m.Root)
-	b.line("}")
-	return b.buf
-}
-
-type dotBuilder struct {
-	next int
-	buf  string
-}
-
-func (d *dotBuilder) id() int       { d.next++; return d.next }
-func (d *dotBuilder) line(s string) { d.buf += s + "\n" }
-
-func (d *dotBuilder) walk(n *TreeItem) int {
-	if n == nil {
-		return -1
-	}
-	id := d.id()
-	if n.Category != "" && n.Match == nil && n.NoMatch == nil {
-		d.line(fmt.Sprintf("  n%d [label=\"%s\", shape=oval];", id, n.Category))
-		return id
-	}
-	d.line(fmt.Sprintf("  n%d [label=\"%s %s %v\"];", id, n.Attribute, n.PredicateName, n.Pivot))
-	lm := d.walk(n.Match)
-	ln := d.walk(n.NoMatch)
-	if lm != -1 {
-		d.line(fmt.Sprintf("  n%d -> n%d [label=\"yes\"];", id, lm))
-	}
-	if ln != -1 {
-		d.line(fmt.Sprintf("  n%d -> n%d [label=\"no\"];", id, ln))
-	}
-	return id
-}
+</html>

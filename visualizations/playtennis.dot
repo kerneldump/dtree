@@ -1,0 +1,24 @@
+digraph dtree {
+  node [shape=box];
+  n1 [label="Outlook == overcast"];
+  n2 [label="yes", shape=oval];
+  n3 [label="Temperature >= 80"];
+  n4 [label="no", shape=oval];
+  n5 [label="Temperature >= 75"];
+  n6 [label="yes", shape=oval];
+  n7 [label="Wind == false"];
+  n8 [label="Temperature >= 72"];
+  n9 [label="no", shape=oval];
+  n10 [label="yes", shape=oval];
+  n8 -> n9 [label="yes"];
+  n8 -> n10 [label="no"];
+  n11 [label="no", shape=oval];
+  n7 -> n8 [label="yes"];
+  n7 -> n11 [label="no"];
+  n5 -> n6 [label="yes"];
+  n5 -> n7 [label="no"];
+  n3 -> n4 [label="yes"];
+  n3 -> n5 [label="no"];
+  n1 -> n2 [label="yes"];
+  n1 -> n3 [label="no"];
+}
