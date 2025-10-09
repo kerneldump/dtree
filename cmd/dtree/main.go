@@ -136,14 +136,22 @@ func predictCmd(args []string) {
 		}
 		cw.Write(hdr)
 		for _, it := range items {
-			pred := model.Predict(it)
+			pred, err := model.Predict(it)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "prediction failed: %v\n", err)
+				os.Exit(1)
+			}
 			rec := make([]string, 0, len(headers)+2)
 			for _, h := range headers {
 				rec = append(rec, fmt.Sprintf("%v", it[h]))
 			}
 			rec = append(rec, pred)
 			if *proba {
-				pb := model.PredictProba(it)
+				pb, err := model.PredictProba(it)
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "probability prediction failed: %v\n", err)
+					os.Exit(1)
+				}
 				b, _ := json.Marshal(pb)
 				rec = append(rec, string(b))
 			}
@@ -161,9 +169,19 @@ func predictCmd(args []string) {
 	bw := bufio.NewWriter(w)
 	enc := json.NewEncoder(bw)
 	for _, it := range items {
-		out := map[string]interface{}{"input": it, "prediction": model.Predict(it)}
+		pred, err := model.Predict(it)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "prediction failed: %v\n", err)
+			os.Exit(1)
+		}
+		out := map[string]interface{}{"input": it, "prediction": pred}
 		if *proba {
-			out["proba"] = model.PredictProba(it)
+			pb, err := model.PredictProba(it)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "probability prediction failed: %v\n", err)
+				os.Exit(1)
+			}
+			out["proba"] = pb
 		}
 		if err := enc.Encode(out); err != nil {
 			fmt.Fprintln(os.Stderr, err)

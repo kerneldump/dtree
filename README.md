@@ -32,26 +32,41 @@ Quickstart (CLI)
   - `bin/dtree visualize --model model.json --out tree.html --dot tree.dot`
 
 Library (Go)
-```
-import "github.com/kerneldump/dtree/dtree"
+```go
+import (
+  "log"
+  "github.com/kerneldump/dtree/dtree"
+)
 
-set := dtree.TrainingSet{
-  dtree.TrainingItem{"x": 1.0, "y": "a", "label": "A"},
+func main() {
+    set := dtree.TrainingSet{
+        dtree.TrainingItem{"x": 1.0, "y": "a", "label": "A"},
+    }
+    cfg := dtree.Config{CategoryAttr: "label"}
+    model, err := dtree.Train(set, cfg)
+    if err != nil {
+        log.Fatal(err)
+    }
+    pred, err := model.Predict(dtree.TrainingItem{"x": 2.0, "y": "a"})
+    if err != nil {
+        log.Fatal(err)
+    }
 }
-cfg := dtree.Config{CategoryAttr: "label"}
-model := dtree.Train(set, cfg)
-pred := model.Predict(dtree.TrainingItem{"x": 2.0, "y": "a"})
 ```
 
-Examples
-- PlayTennis: `examples/playtennis.csv`, `examples/playtennis.jsonl`
+## Examples
 
-Project Flow
-- See `flow.svg` for a high-level diagram of how the CLI and library interact (train/predict/visualize and file I/O).
-- Open directly (e.g., `open flow.svg`) or view it in your editor.
+PlayTennis: examples/playtennis.csv, examples/playtennis.jsonl
 
-Makefile
-- `make build`, `make test`, `make example-all`, `make clean`
+## Project Flow
 
-License
-- Apache-2.0
+See flow.svg for a high-level diagram of how the CLI and library interact (train/predict/visualize and file I/O).
+Open directly (e.g., open flow.svg) or view it in your editor.
+
+## Makefile
+
+make build, make test, make example-all, make clean
+
+## License
+
+Apache-2.0
