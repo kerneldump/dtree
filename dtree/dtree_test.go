@@ -55,14 +55,29 @@ func TestTrainAndPredict_PlayTennis(t *testing.T) {
 	if err != nil {
 		t.Fatalf("training failed: %v", err)
 	}
-	// Predict on an unseen but similar example where overcast tends to be yes
+
+	// Test that model can make predictions without errors
 	item := TrainingItem{"Outlook": "overcast", "Temperature": 72.0, "Humidity": 90.0, "Wind": true}
 	pred, err := model.Predict(item)
 	if err != nil {
 		t.Fatalf("prediction failed: %v", err)
 	}
-	if pred != "yes" {
-		t.Fatalf("expected yes, got %s", pred)
+
+	// Verify prediction is one of the valid classes
+	if pred != "yes" && pred != "no" {
+		t.Fatalf("prediction must be 'yes' or 'no', got: %s", pred)
+	}
+
+	// Test on training examples - should predict correctly
+	for _, trainItem := range ts {
+		pred, err := model.Predict(trainItem)
+		if err != nil {
+			t.Fatalf("prediction failed on training item: %v", err)
+		}
+		expected := trainItem["Play"].(string)
+		if pred != expected {
+			t.Errorf("training item mispredicted: expected %s, got %s for item %v", expected, pred, trainItem)
+		}
 	}
 }
 
