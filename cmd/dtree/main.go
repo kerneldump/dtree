@@ -90,7 +90,16 @@ func trainCmd(args []string) {
 		fmt.Fprintf(os.Stderr, "failed to save model: %v\n", err)
 		os.Exit(1)
 	}
+
+	// Print success message and model statistics
 	fmt.Printf("Model trained successfully and saved to %s\n", *out)
+	stats := model.Stats()
+	fmt.Printf("Model statistics:\n")
+	fmt.Printf("  Tree depth: %d\n", stats.TreeDepth)
+	fmt.Printf("  Total nodes: %d\n", stats.TotalNodes)
+	fmt.Printf("  Leaf nodes: %d\n", stats.LeafNodes)
+	fmt.Printf("  Internal nodes: %d\n", stats.InternalNodes)
+	fmt.Printf("  Classes: %d\n", len(stats.Classes))
 }
 
 // predictCmd reads data and a JSON model, then outputs predictions.
