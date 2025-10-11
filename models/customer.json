@@ -28,9 +28,9 @@
             },
             "matchedCount": 1,
             "noMatchedCount": 1,
-            "attribute": "Age",
+            "attribute": "SpendingScore",
             "predicateName": "\u003e=",
-            "pivot": 29
+            "pivot": 95
           },
           "classCounts": {
             "early_adopter": 1,
@@ -39,9 +39,9 @@
           },
           "matchedCount": 1,
           "noMatchedCount": 2,
-          "attribute": "Income",
+          "attribute": "Age",
           "predicateName": "\u003e=",
-          "pivot": 95000
+          "pivot": 34
         },
         "noMatch": {
           "match": {
@@ -62,9 +62,9 @@
           },
           "matchedCount": 2,
           "noMatchedCount": 1,
-          "attribute": "SpendingScore",
+          "attribute": "PurchaseFrequency",
           "predicateName": "\u003e=",
-          "pivot": 90
+          "pivot": 18
         },
         "classCounts": {
           "early_adopter": 1,
@@ -88,17 +88,35 @@
             }
           },
           "noMatch": {
-            "category": "style_conscious",
+            "match": {
+              "category": "style_conscious",
+              "classCounts": {
+                "style_conscious": 1
+              }
+            },
+            "noMatch": {
+              "category": "young_spender",
+              "classCounts": {
+                "young_spender": 1
+              }
+            },
             "classCounts": {
-              "style_conscious": 1
-            }
+              "style_conscious": 1,
+              "young_spender": 1
+            },
+            "matchedCount": 1,
+            "noMatchedCount": 1,
+            "attribute": "SpendingScore",
+            "predicateName": "\u003e=",
+            "pivot": 75
           },
           "classCounts": {
             "style_conscious": 1,
-            "trendy_shopper": 2
+            "trendy_shopper": 2,
+            "young_spender": 1
           },
           "matchedCount": 2,
-          "noMatchedCount": 1,
+          "noMatchedCount": 2,
           "attribute": "SpendingScore",
           "predicateName": "\u003e=",
           "pivot": 78
@@ -130,13 +148,14 @@
           "active_lifestyle": 2,
           "fitness_oriented": 1,
           "style_conscious": 1,
-          "trendy_shopper": 2
+          "trendy_shopper": 2,
+          "young_spender": 1
         },
-        "matchedCount": 3,
+        "matchedCount": 4,
         "noMatchedCount": 3,
-        "attribute": "WebsiteSessions",
-        "predicateName": "\u003e=",
-        "pivot": 35
+        "attribute": "PreferredCategory",
+        "predicateName": "==",
+        "pivot": "fashion"
       },
       "classCounts": {
         "active_lifestyle": 2,
@@ -147,10 +166,11 @@
         "impulse_buyer": 2,
         "style_conscious": 1,
         "tech_enthusiast": 1,
-        "trendy_shopper": 2
+        "trendy_shopper": 2,
+        "young_spender": 1
       },
       "matchedCount": 6,
-      "noMatchedCount": 6,
+      "noMatchedCount": 7,
       "attribute": "SpendingScore",
       "predicateName": "\u003e=",
       "pivot": 85
@@ -160,49 +180,49 @@
         "match": {
           "match": {
             "match": {
-              "category": "conservative",
+              "category": "home_improver",
               "classCounts": {
-                "conservative": 1
+                "home_improver": 1
               }
             },
             "noMatch": {
-              "category": "traditional_buyer",
+              "category": "family_focused",
               "classCounts": {
-                "traditional_buyer": 1
+                "family_focused": 1
               }
             },
             "classCounts": {
-              "conservative": 1,
-              "traditional_buyer": 1
+              "family_focused": 1,
+              "home_improver": 1
             },
             "matchedCount": 1,
             "noMatchedCount": 1,
             "attribute": "Age",
             "predicateName": "\u003e=",
-            "pivot": 52
+            "pivot": 46
           },
           "noMatch": {
-            "category": "minimal_buyer",
-            "classCounts": {
-              "minimal_buyer": 2
-            }
-          },
-          "classCounts": {
-            "conservative": 1,
-            "minimal_buyer": 2,
-            "traditional_buyer": 1
-          },
-          "matchedCount": 2,
-          "noMatchedCount": 2,
-          "attribute": "WebsiteSessions",
-          "predicateName": "\u003e=",
-          "pivot": 8
-        },
-        "noMatch": {
-          "match": {
             "category": "premium_customer",
             "classCounts": {
               "premium_customer": 1
+            }
+          },
+          "classCounts": {
+            "family_focused": 1,
+            "home_improver": 1,
+            "premium_customer": 1
+          },
+          "matchedCount": 2,
+          "noMatchedCount": 1,
+          "attribute": "PreferredCategory",
+          "predicateName": "==",
+          "pivot": "home"
+        },
+        "noMatch": {
+          "match": {
+            "category": "practical_buyer",
+            "classCounts": {
+              "practical_buyer": 1
             }
           },
           "noMatch": {
@@ -212,124 +232,105 @@
             }
           },
           "classCounts": {
-            "premium_customer": 1,
+            "practical_buyer": 1,
             "selective_luxury": 2
           },
           "matchedCount": 1,
           "noMatchedCount": 2,
-          "attribute": "SpendingScore",
-          "predicateName": "\u003e=",
-          "pivot": 55
+          "attribute": "PreferredCategory",
+          "predicateName": "==",
+          "pivot": "home"
         },
         "classCounts": {
-          "conservative": 1,
-          "minimal_buyer": 2,
+          "family_focused": 1,
+          "home_improver": 1,
+          "practical_buyer": 1,
           "premium_customer": 1,
-          "selective_luxury": 2,
-          "traditional_buyer": 1
+          "selective_luxury": 2
         },
-        "matchedCount": 4,
+        "matchedCount": 3,
         "noMatchedCount": 3,
-        "attribute": "PreferredCategory",
-        "predicateName": "==",
-        "pivot": "books"
+        "attribute": "SpendingScore",
+        "predicateName": "\u003e=",
+        "pivot": 45
       },
       "noMatch": {
         "match": {
           "match": {
+            "category": "mature_saver",
+            "classCounts": {
+              "mature_saver": 1
+            }
+          },
+          "noMatch": {
             "match": {
-              "category": "home_improver",
+              "category": "knowledge_seeker",
               "classCounts": {
-                "home_improver": 1
+                "knowledge_seeker": 1
               }
             },
             "noMatch": {
-              "category": "mature_saver",
+              "category": "traditional_buyer",
               "classCounts": {
-                "mature_saver": 1
+                "traditional_buyer": 1
               }
             },
             "classCounts": {
-              "home_improver": 1,
-              "mature_saver": 1
+              "knowledge_seeker": 1,
+              "traditional_buyer": 1
             },
             "matchedCount": 1,
             "noMatchedCount": 1,
-            "attribute": "Age",
+            "attribute": "PurchaseFrequency",
             "predicateName": "\u003e=",
-            "pivot": 46
-          },
-          "noMatch": {
-            "category": "knowledge_seeker",
-            "classCounts": {
-              "knowledge_seeker": 1
-            }
+            "pivot": 4
           },
           "classCounts": {
-            "home_improver": 1,
             "knowledge_seeker": 1,
-            "mature_saver": 1
+            "mature_saver": 1,
+            "traditional_buyer": 1
           },
-          "matchedCount": 2,
-          "noMatchedCount": 1,
-          "attribute": "WebsiteSessions",
-          "predicateName": "\u003e=",
-          "pivot": 12
+          "matchedCount": 1,
+          "noMatchedCount": 2,
+          "attribute": "PreferredCategory",
+          "predicateName": "==",
+          "pivot": "home"
         },
         "noMatch": {
           "match": {
-            "category": "young_spender",
+            "category": "conservative",
             "classCounts": {
-              "young_spender": 1
+              "conservative": 1
             }
           },
           "noMatch": {
-            "match": {
-              "category": "family_focused",
-              "classCounts": {
-                "family_focused": 1
-              }
-            },
-            "noMatch": {
-              "category": "practical_buyer",
-              "classCounts": {
-                "practical_buyer": 1
-              }
-            },
+            "category": "minimal_buyer",
             "classCounts": {
-              "family_focused": 1,
-              "practical_buyer": 1
-            },
-            "matchedCount": 1,
-            "noMatchedCount": 1,
-            "attribute": "Age",
-            "predicateName": "\u003e=",
-            "pivot": 41
+              "minimal_buyer": 2
+            }
           },
           "classCounts": {
-            "family_focused": 1,
-            "practical_buyer": 1,
-            "young_spender": 1
+            "conservative": 1,
+            "minimal_buyer": 2
           },
           "matchedCount": 1,
           "noMatchedCount": 2,
           "attribute": "WebsiteSessions",
           "predicateName": "\u003e=",
-          "pivot": 25
+          "pivot": 8
         },
         "classCounts": {
-          "family_focused": 1,
-          "home_improver": 1,
+          "conservative": 1,
           "knowledge_seeker": 1,
           "mature_saver": 1,
-          "practical_buyer": 1,
-          "young_spender": 1
+          "minimal_buyer": 2,
+          "traditional_buyer": 1
         },
         "matchedCount": 3,
         "noMatchedCount": 3,
-        "attribute": "MembershipYears",
+        "attribute": "SpendingScore",
         "predicateName": "\u003e=",
-        "pivot": 8
+        "pivot": 32
       },
       "classCounts": {
         "conservative": 1,
@@ -341,14 +342,13 @@
         "practical_buyer": 1,
         "premium_customer": 1,
         "selective_luxury": 2,
-        "traditional_buyer": 1,
-        "young_spender": 1
+        "traditional_buyer": 1
       },
-      "matchedCount": 7,
+      "matchedCount": 6,
       "noMatchedCount": 6,
-      "attribute": "Age",
+      "attribute": "WebsiteSessions",
       "predicateName": "\u003e=",
-      "pivot": 47
+      "pivot": 15
     },
     "classCounts": {
       "active_lifestyle": 2,
@@ -372,11 +372,11 @@
       "trendy_shopper": 2,
       "young_spender": 1
     },
-    "matchedCount": 12,
-    "noMatchedCount": 13,
-    "attribute": "PurchaseFrequency",
+    "matchedCount": 13,
+    "noMatchedCount": 12,
+    "attribute": "SpendingScore",
     "predicateName": "\u003e=",
-    "pivot": 9
+    "pivot": 65
   },
   "config": {
     "categoryAttr": "Segment",

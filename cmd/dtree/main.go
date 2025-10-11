@@ -18,6 +18,15 @@ import (
 
 // main dispatches to subcommands: train, predict, visualize.
 func main() {
+	// Recover from panics to provide a clean error message
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Fprintf(os.Stderr, "Fatal error: %v\n", r)
+			fmt.Fprintln(os.Stderr, "This is likely a bug. Please report it with the command you ran.")
+			os.Exit(2)
+		}
+	}()
+
 	if len(os.Args) < 2 {
 		usage()
 		os.Exit(1)
@@ -68,7 +77,7 @@ func trainCmd(args []string) {
 	}
 	set, err := readTrainingSet(*in, *format, *label)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintf(os.Stderr, "failed to read training data: %v\n", err)
 		os.Exit(1)
 	}
 	cfg := dtree.Config{CategoryAttr: *label, Criterion: "entropy", MaxDepth: *maxDepth, MinSamples: *minSamples}
@@ -78,9 +87,10 @@ func trainCmd(args []string) {
 		os.Exit(1)
 	}
 	if err := model.SaveJSON(*out); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintf(os.Stderr, "failed to save model: %v\n", err)
 		os.Exit(1)
 	}
+	fmt.Printf("Model trained successfully and saved to %s\n", *out)
 }
 
 // predictCmd reads data and a JSON model, then outputs predictions.
@@ -105,13 +115,13 @@ func predictCmd(args []string) {
 	}
 	model, err := dtree.LoadJSON(*modelPath)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintf(os.Stderr, "failed to load model: %v\n", err)
 		os.Exit(1)
 	}
 
 	items, headers, err := readItems(*in, *format, *label)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintf(os.Stderr, "failed to read input data: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -119,7 +129,7 @@ func predictCmd(args []string) {
 	if *out != "" {
 		f, err := os.Create(*out)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
+			fmt.Fprintf(os.Stderr, "failed to create output file: %v\n", err)
 			os.Exit(1)
 		}
 		defer f.Close()
@@ -135,10 +145,10 @@ func predictCmd(args []string) {
 			hdr = append(hdr, "proba")
 		}
 		cw.Write(hdr)
-		for _, it := range items {
+		for i, it := range items {
 			pred, err := model.Predict(it)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "prediction failed: %v\n", err)
+				fmt.Fprintf(os.Stderr, "prediction failed on row %d: %v\n", i+1, err)
 				os.Exit(1)
 			}
 			rec := make([]string, 0, len(headers)+2)
@@ -149,7 +159,7 @@ func predictCmd(args []string) {
 			if *proba {
 				pb, err := model.PredictProba(it)
 				if err != nil {
-					fmt.Fprintf(os.Stderr, "probability prediction failed: %v\n", err)
+					fmt.Fprintf(os.Stderr, "probability prediction failed on row %d: %v\n", i+1, err)
 					os.Exit(1)
 				}
 				b, _ := json.Marshal(pb)
@@ -159,8 +169,11 @@ func predictCmd(args []string) {
 		}
 		cw.Flush()
 		if err := cw.Error(); err != nil {
-			fmt.Fprintln(os.Stderr, err)
+			fmt.Fprintf(os.Stderr, "failed to write CSV output: %v\n", err)
 			os.Exit(1)
+		}
+		if *out != "" {
+			fmt.Printf("Predictions written to %s\n", *out)
 		}
 		return
 	}
@@ -168,27 +181,30 @@ func predictCmd(args []string) {
 	// JSONL output
 	bw := bufio.NewWriter(w)
 	enc := json.NewEncoder(bw)
-	for _, it := range items {
+	for i, it := range items {
 		pred, err := model.Predict(it)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "prediction failed: %v\n", err)
+			fmt.Fprintf(os.Stderr, "prediction failed on row %d: %v\n", i+1, err)
 			os.Exit(1)
 		}
 		out := map[string]interface{}{"input": it, "prediction": pred}
 		if *proba {
 			pb, err := model.PredictProba(it)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "probability prediction failed: %v\n", err)
+				fmt.Fprintf(os.Stderr, "probability prediction failed on row %d: %v\n", i+1, err)
 				os.Exit(1)
 			}
 			out["proba"] = pb
 		}
 		if err := enc.Encode(out); err != nil {
-			fmt.Fprintln(os.Stderr, err)
+			fmt.Fprintf(os.Stderr, "failed to write JSONL output: %v\n", err)
 			os.Exit(1)
 		}
 	}
 	bw.Flush()
+	if *out != "" {
+		fmt.Printf("Predictions written to %s\n", *out)
+	}
 }
 
 // visualizeCmd renders the model to HTML, and optionally Graphviz DOT.
@@ -205,18 +221,21 @@ func visualizeCmd(args []string) {
 	}
 	model, err := dtree.LoadJSON(*modelPath)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintf(os.Stderr, "failed to load model: %v\n", err)
 		os.Exit(1)
 	}
 	if err := model.ToHTML(*outHTML); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintf(os.Stderr, "failed to write HTML: %v\n", err)
 		os.Exit(1)
 	}
+	fmt.Printf("HTML visualization written to %s\n", *outHTML)
+
 	if *outDOT != "" {
 		if err := os.WriteFile(*outDOT, []byte(model.ToDOT()), 0644); err != nil {
-			fmt.Fprintln(os.Stderr, err)
+			fmt.Fprintf(os.Stderr, "failed to write DOT file: %v\n", err)
 			os.Exit(1)
 		}
+		fmt.Printf("DOT file written to %s\n", *outDOT)
 	}
 }
 
@@ -229,9 +248,9 @@ func readTrainingSet(path, format, label string) (dtree.TrainingSet, error) {
 		return nil, err
 	}
 	// ensure label exists
-	for _, it := range items {
+	for i, it := range items {
 		if _, ok := it[label]; !ok {
-			return nil, fmt.Errorf("missing label '%s' in some rows", label)
+			return nil, fmt.Errorf("missing label '%s' in row %d", label, i+1)
 		}
 	}
 	return dtree.TrainingSet(items), nil
@@ -242,7 +261,7 @@ func readTrainingSet(path, format, label string) (dtree.TrainingSet, error) {
 func readItems(path, format, label string) ([]dtree.TrainingItem, []string, error) {
 	f, err := os.Open(path)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("cannot open file: %w", err)
 	}
 	defer f.Close()
 	switch strings.ToLower(format) {
@@ -251,36 +270,49 @@ func readItems(path, format, label string) ([]dtree.TrainingItem, []string, erro
 		r.TrimLeadingSpace = true
 		header, err := r.Read()
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, fmt.Errorf("cannot read CSV header: %w", err)
 		}
 		var items []dtree.TrainingItem
+		rowNum := 2 // Start at 2 (1 is header)
 		for {
 			rec, err := r.Read()
 			if err == io.EOF {
 				break
 			}
 			if err != nil {
-				return nil, nil, err
+				return nil, nil, fmt.Errorf("error reading CSV row %d: %w", rowNum, err)
+			}
+			if len(rec) != len(header) {
+				return nil, nil, fmt.Errorf("row %d has %d columns but header has %d", rowNum, len(rec), len(header))
 			}
 			it := dtree.TrainingItem{}
 			for i, h := range header {
 				it[h] = parseCSVValue(rec[i])
 			}
 			items = append(items, it)
+			rowNum++
+		}
+		if len(items) == 0 {
+			return nil, nil, fmt.Errorf("CSV file is empty (no data rows)")
 		}
 		return items, header, nil
 	case "jsonl":
 		var items []dtree.TrainingItem
 		sc := bufio.NewScanner(f)
+		lineNum := 1
 		for sc.Scan() {
 			var m map[string]interface{}
 			if err := json.Unmarshal(sc.Bytes(), &m); err != nil {
-				return nil, nil, err
+				return nil, nil, fmt.Errorf("invalid JSON on line %d: %w", lineNum, err)
 			}
 			items = append(items, dtree.TrainingItem(m))
+			lineNum++
 		}
 		if err := sc.Err(); err != nil {
-			return nil, nil, err
+			return nil, nil, fmt.Errorf("error reading JSONL: %w", err)
+		}
+		if len(items) == 0 {
+			return nil, nil, fmt.Errorf("JSONL file is empty")
 		}
 		// collect headers from first item (best-effort)
 		hdr := []string{}
@@ -291,7 +323,7 @@ func readItems(path, format, label string) ([]dtree.TrainingItem, []string, erro
 		}
 		return items, hdr, nil
 	default:
-		return nil, nil, fmt.Errorf("unknown format: %s", format)
+		return nil, nil, fmt.Errorf("unknown format: %s (must be 'csv' or 'jsonl')", format)
 	}
 }
 
