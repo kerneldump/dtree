@@ -4,6 +4,7 @@ import (
 	"errors"
 	"math"
 	"reflect"
+	"sort"
 )
 
 // Internal helpers
@@ -213,11 +214,26 @@ func leafFromSet(set TrainingSet, labelAttr string) *TreeItem {
 	return &TreeItem{Category: mostVal, ClassCounts: counts}
 }
 
+// mostFrequentValue returns the most common key in counts.
+// In case of ties, returns the lexicographically smallest key for deterministic behavior.
 func mostFrequentValue(counts map[string]int) string {
+	if len(counts) == 0 {
+		return ""
+	}
+
+	// Collect and sort keys for deterministic iteration
+	keys := make([]string, 0, len(counts))
+	for k := range counts {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
 	var bestK string
 	var bestV int
-	for k, v := range counts {
-		if v > bestV {
+	for _, k := range keys {
+		v := counts[k]
+		// Pick this key if it has a higher count, or if it's the first valid key
+		if v > bestV || bestK == "" {
 			bestK, bestV = k, v
 		}
 	}
